@@ -1,0 +1,1101 @@
+--// GOD MODE HUB V3
+
+--// Delta Executor
+
+--// by ChatGPT cho ông dr :))
+
+
+
+local Players = game:GetService("Players")
+
+local RunService = game:GetService("RunService")
+
+local UIS = game:GetService("UserInputService")
+
+
+
+local player = Players.LocalPlayer
+
+
+
+if player:FindFirstChild("GodModeHubLoaded") then
+
+return
+
+end
+
+
+
+local tag = Instance.new("BoolValue")
+
+tag.Name = "GodModeHubLoaded"
+
+tag.Parent = player
+
+
+
+--========================
+
+-- GOD MODE
+
+--========================
+
+
+
+pcall(function()
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Rawbr10/Roblox-Scripts/refs/heads/main/God%20Mode%20Script%20Universal"))()
+
+end)
+
+
+
+--========================
+
+-- GUI
+
+--========================
+
+
+
+local gui = Instance.new("ScreenGui")
+
+gui.Name = "GodModeUI"
+
+gui.Parent = player:WaitForChild("PlayerGui")
+
+gui.ResetOnSpawn = false
+
+gui.IgnoreGuiInset = true -- [SỬA Ở ĐÂY]: Bỏ qua thanh Topbar để bảng ở CHÍNH GIỮA hàng dọc tuyệt đối
+
+
+
+-- MAIN
+
+local main = Instance.new("Frame")
+
+main.Parent = gui
+
+main.Size = UDim2.new(0,280,0,250) -- Chiều cao ngắn lại gọn gàng
+
+main.AnchorPoint = Vector2.new(0.5,0.5)
+
+main.Position = UDim2.new(0.5,0,0.5,0) -- Giữa màn hình chuẩn
+
+main.BackgroundColor3 = Color3.fromRGB(30,30,30)
+
+main.BackgroundTransparency = 0.35
+
+main.BorderSizePixel = 2
+
+main.BorderColor3 = Color3.new(0,0,0)
+
+main.Visible = false
+
+Instance.new("UICorner",main).CornerRadius = UDim.new(0,14)
+
+
+
+-- TITLE
+
+local title = Instance.new("TextLabel")
+
+title.Parent = main
+
+title.Position = UDim2.new(0,15,0,0)
+
+title.Size = UDim2.new(1,-30,0,42)
+
+title.BackgroundTransparency = 1
+
+title.Text = "God Mode"
+
+title.Font = Enum.Font.GothamBold
+
+title.TextSize = 16
+
+title.TextColor3 = Color3.new(1,1,1)
+
+
+
+-- CONTENT
+
+local content = Instance.new("ScrollingFrame")
+
+content.Parent = main
+
+content.Position = UDim2.new(0,0,0,42)
+
+content.Size = UDim2.new(1,0,1,-42)
+
+content.BackgroundTransparency = 1
+
+content.CanvasSize = UDim2.new(0,0,0,400) 
+
+content.ScrollBarThickness = 4
+
+content.ScrollBarImageColor3 = Color3.fromRGB(255,255,255)
+
+
+
+--========================
+
+-- OPEN BUTTON & DRAG
+
+--========================
+
+
+
+local openBtn = Instance.new("TextButton")
+
+openBtn.Parent = gui
+
+openBtn.Size = UDim2.new(0,42,0,42)
+
+openBtn.Position = UDim2.new(0.5,-21,0.3,0)
+
+openBtn.BackgroundColor3 = Color3.fromRGB(30,30,30)
+
+openBtn.BackgroundTransparency = 0.35
+
+openBtn.BorderSizePixel = 2
+
+openBtn.BorderColor3 = Color3.new(0,0,0)
+
+openBtn.Text = ">"
+
+openBtn.Font = Enum.Font.GothamBold
+
+openBtn.TextSize = 22
+
+openBtn.TextColor3 = Color3.new(1,1,1)
+
+Instance.new("UICorner",openBtn).CornerRadius = UDim.new(1,0)
+
+
+
+local opened = false
+
+local dragging = false
+
+local dragInput, dragStart, startPos, moved = nil, nil, nil, false
+
+
+
+local function updateDrag(input)
+
+local delta = input.Position - dragStart
+
+if math.abs(delta.X) > 5 or math.abs(delta.Y) > 5 then moved = true end
+
+openBtn.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+
+end
+
+
+
+openBtn.InputBegan:Connect(function(input)
+
+if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+
+dragging = true
+
+moved = false
+
+dragStart = input.Position
+
+startPos = openBtn.Position
+
+input.Changed:Connect(function()
+
+if input.UserInputState == Enum.UserInputState.End then
+
+dragging = false
+
+task.delay(0.1,function() moved = false end)
+
+end
+
+end)
+
+end
+
+end)
+
+
+
+openBtn.InputChanged:Connect(function(input)
+
+if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+
+dragInput = input
+
+end
+
+end)
+
+
+
+UIS.InputChanged:Connect(function(input)
+
+if input == dragInput and dragging then updateDrag(input) end
+
+end)
+
+
+
+openBtn.MouseButton1Click:Connect(function()
+
+if moved then return end
+
+opened = not opened
+
+if opened then
+
+main.Visible = true
+
+main.Position = UDim2.new(0.5,0,0.5,0) 
+
+openBtn.Text = "v"
+
+else
+
+main.Visible = false
+
+openBtn.Text = ">"
+
+end
+
+end)
+
+
+
+--========================
+
+-- SLIDER FUNCTION
+
+--========================
+
+
+
+local function createSlider(text,default,min,max,y)
+
+local current = default
+
+
+
+local label = Instance.new("TextLabel")
+
+label.Parent = content
+
+label.Position = UDim2.new(0,15,0,y)
+
+label.Size = UDim2.new(0,240,0,20)
+
+label.BackgroundTransparency = 1
+
+label.Text = text..": "..default
+
+label.Font = Enum.Font.Gotham
+
+label.TextSize = 14
+
+label.TextColor3 = Color3.new(1,1,1)
+
+label.TextXAlignment = Enum.TextXAlignment.Left
+
+
+
+local minusBtn = Instance.new("TextButton")
+
+minusBtn.Parent = content
+
+minusBtn.Position = UDim2.new(0,15,0,y+22)
+
+minusBtn.Size = UDim2.new(0,22,0,22)
+
+minusBtn.Text = "-"
+
+minusBtn.Font = Enum.Font.GothamBold
+
+minusBtn.TextSize = 18
+
+minusBtn.TextColor3 = Color3.new(1,1,1)
+
+minusBtn.BackgroundColor3 = Color3.fromRGB(60,60,60)
+
+Instance.new("UICorner",minusBtn).CornerRadius = UDim.new(1,0)
+
+
+
+local plusBtn = Instance.new("TextButton")
+
+plusBtn.Parent = content
+
+plusBtn.Position = UDim2.new(0,233,0,y+22)
+
+plusBtn.Size = UDim2.new(0,22,0,22)
+
+plusBtn.Text = "+"
+
+plusBtn.Font = Enum.Font.GothamBold
+
+plusBtn.TextSize = 18
+
+plusBtn.TextColor3 = Color3.new(1,1,1)
+
+plusBtn.BackgroundColor3 = Color3.fromRGB(60,60,60)
+
+Instance.new("UICorner",plusBtn).CornerRadius = UDim.new(1,0)
+
+
+
+local bar = Instance.new("Frame")
+
+bar.Parent = content
+
+bar.Position = UDim2.new(0,45,0,y+28)
+
+bar.Size = UDim2.new(0,180,0,8)
+
+bar.BackgroundColor3 = Color3.fromRGB(70,70,70)
+
+Instance.new("UICorner",bar).CornerRadius = UDim.new(1,0)
+
+
+
+local fill = Instance.new("Frame")
+
+fill.Parent = bar
+
+fill.Size = UDim2.new(default/max,0,1,0)
+
+fill.BackgroundColor3 = Color3.fromRGB(255,255,255)
+
+fill.BorderSizePixel = 0
+
+Instance.new("UICorner",fill).CornerRadius = UDim.new(1,0)
+
+
+
+local knob = Instance.new("TextButton")
+
+knob.Parent = bar
+
+knob.Size = UDim2.new(0,18,0,18)
+
+knob.AnchorPoint = Vector2.new(0.5,0.5)
+
+knob.Position = UDim2.new(default/max,0,0.5,0)
+
+knob.Text = ""
+
+knob.BackgroundColor3 = Color3.new(1,1,1)
+
+Instance.new("UICorner",knob).CornerRadius = UDim.new(1,0)
+
+
+
+local sliderDragging = false
+
+
+
+local function refresh(percent)
+
+fill.Size = UDim2.new(percent,0,1,0)
+
+knob.Position = UDim2.new(percent,0,0.5,0)
+
+label.Text = text..": "..current
+
+end
+
+
+
+local function update(px)
+
+local percent = math.clamp((px - bar.AbsolutePosition.X) / bar.AbsoluteSize.X,0,1)
+
+current = math.floor(min + ((max-min)*percent))
+
+refresh(percent)
+
+end
+
+
+
+minusBtn.MouseButton1Click:Connect(function() current = math.clamp(current - 1,min,max); refresh(current/max) end)
+
+plusBtn.MouseButton1Click:Connect(function() current = math.clamp(current + 1,min,max); refresh(current/max) end)
+
+knob.MouseButton1Down:Connect(function() sliderDragging = true end)
+
+UIS.InputEnded:Connect(function(input)
+
+if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then sliderDragging = false end
+
+end)
+
+UIS.InputChanged:Connect(function(input)
+
+if sliderDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then update(input.Position.X) end
+
+end)
+
+bar.InputBegan:Connect(function(input)
+
+if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then update(input.Position.X) end
+
+end)
+
+
+
+return function() return current end
+
+end
+
+
+
+--========================
+
+-- SLIDERS & BASIC Toggles
+
+--========================
+
+
+
+local getSpeed = createSlider("Chạy nhanh",16,0,1000,10)
+
+local getJump = createSlider("Nhảy cao",7,0,1000,80)
+
+
+
+local noclip = false
+
+local noclipBtn = Instance.new("TextButton")
+
+noclipBtn.Parent = content
+
+noclipBtn.Position = UDim2.new(0,15,0,155)
+
+noclipBtn.Size = UDim2.new(0,240,0,36)
+
+noclipBtn.BackgroundColor3 = Color3.fromRGB(170,0,0)
+
+noclipBtn.Text = "Xuyên tường: Bật"
+
+noclipBtn.Font = Enum.Font.GothamBold
+
+noclipBtn.TextSize = 14
+
+noclipBtn.TextColor3 = Color3.new(1,1,1)
+
+Instance.new("UICorner",noclipBtn).CornerRadius = UDim.new(0,12)
+
+
+
+noclipBtn.MouseButton1Click:Connect(function()
+
+noclip = not noclip
+
+if noclip then
+
+noclipBtn.Text = "Xuyên tường: Tắt"; noclipBtn.BackgroundColor3 = Color3.fromRGB(0,170,0)
+
+else
+
+noclipBtn.Text = "Xuyên tường: Bật"; noclipBtn.BackgroundColor3 = Color3.fromRGB(170,0,0)
+
+end
+
+end)
+
+
+
+-- ESP CODE
+
+local espEnabled = false
+
+local espBtn = Instance.new("TextButton")
+
+espBtn.Parent = content
+
+espBtn.Position = UDim2.new(0,15,0,200)
+
+espBtn.Size = UDim2.new(0,240,0,36)
+
+espBtn.BackgroundColor3 = Color3.fromRGB(170,0,0)
+
+espBtn.Text = "ESP Player: Bật"
+
+espBtn.Font = Enum.Font.GothamBold
+
+espBtn.TextSize = 14
+
+espBtn.TextColor3 = Color3.new(1,1,1)
+
+Instance.new("UICorner",espBtn).CornerRadius = UDim.new(0,12)
+
+
+
+local function addESP(plr)
+
+if plr == player then return end
+
+local function setup(char)
+
+if char:FindFirstChild("ESP_Highlight") then return end
+
+local head = char:WaitForChild("Head",5)
+
+if not head then return end
+
+local bill = Instance.new("BillboardGui")
+
+bill.Name = "ESP_Name"; bill.Parent = head; bill.Size = UDim2.new(0,160,0,40); bill.StudsOffset = Vector3.new(0,2.8,0); bill.AlwaysOnTop = true
+
+local txt = Instance.new("TextLabel")
+
+txt.Parent = bill; txt.Size = UDim2.new(1,0,1,0); txt.BackgroundTransparency = 1; txt.Text = plr.DisplayName; txt.TextColor3 = Color3.new(1,1,1); txt.TextStrokeTransparency = 0; txt.TextScaled = true; txt.Font = Enum.Font.GothamBold
+
+local hl = Instance.new("Highlight")
+
+hl.Name = "ESP_Highlight"; hl.Parent = char; hl.FillTransparency = 1; hl.OutlineTransparency = 0; hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop; hl.OutlineColor = Color3.new(1,1,1)
+
+end
+
+if plr.Character then setup(plr.Character) end
+
+plr.CharacterAdded:Connect(setup)
+
+end
+
+
+
+local function removeESP(plr)
+
+if plr.Character then
+
+local char = plr.Character
+
+local head = char:FindFirstChild("Head")
+
+if head and head:FindFirstChild("ESP_Name") then head.ESP_Name:Destroy() end
+
+if char:FindFirstChild("ESP_Highlight") then char.ESP_Highlight:Destroy() end
+
+end
+
+end
+
+
+
+espBtn.MouseButton1Click:Connect(function()
+
+espEnabled = not espEnabled
+
+if espEnabled then
+
+espBtn.Text = "ESP Player: Tắt"; espBtn.BackgroundColor3 = Color3.fromRGB(0,170,0)
+
+for _,plr in pairs(game.Players:GetPlayers()) do addESP(plr) end
+
+else
+
+espBtn.Text = "ESP Player: Bật"; espBtn.BackgroundColor3 = Color3.fromRGB(170,0,0)
+
+for _,plr in pairs(game.Players:GetPlayers()) do removeESP(plr) end
+
+end
+
+end)
+
+game.Players.PlayerAdded:Connect(function(plr) if espEnabled then addESP(plr) end end)
+
+
+
+-- INFINITE JUMP
+
+local infiniteJump = false
+
+local infJumpBtn = Instance.new("TextButton")
+
+infJumpBtn.Parent = content
+
+infJumpBtn.Position = UDim2.new(0,15,0,245)
+
+infJumpBtn.Size = UDim2.new(0,240,0,36)
+
+infJumpBtn.BackgroundColor3 = Color3.fromRGB(170,0,0)
+
+infJumpBtn.Text = "Nhảy vô hạn: Bật"
+
+infJumpBtn.Font = Enum.Font.GothamBold
+
+infJumpBtn.TextSize = 14
+
+infJumpBtn.TextColor3 = Color3.new(1,1,1)
+
+Instance.new("UICorner",infJumpBtn).CornerRadius = UDim.new(0,12)
+
+
+
+infJumpBtn.MouseButton1Click:Connect(function()
+
+infiniteJump = not infiniteJump
+
+if infiniteJump then infJumpBtn.Text = "Nhảy vô hạn: Tắt"; infJumpBtn.BackgroundColor3 = Color3.fromRGB(0,170,0)
+
+else infJumpBtn.Text = "Nhảy vô hạn: Bật"; infJumpBtn.BackgroundColor3 = Color3.fromRGB(170,0,0) end
+
+end)
+
+
+
+UIS.JumpRequest:Connect(function()
+
+if infiniteJump then
+
+local char = player.Character
+
+if char then
+
+local hum = char:FindFirstChildOfClass("Humanoid")
+
+if hum then hum:ChangeState(Enum.HumanoidStateType.Jumping) end
+
+end
+
+end
+
+end)
+
+
+
+--========================
+
+-- SIT & LAY TOGGLE FIXED
+
+--========================
+
+
+
+local sitEnabled = false
+
+local layEnabled = false 
+
+local targetPosition = nil
+
+local targetLookVector = Vector3.new(0, 0, -1)
+
+
+
+local sitBtn = Instance.new("TextButton")
+
+sitBtn.Parent = content
+
+sitBtn.Position = UDim2.new(0,15,0,290)
+
+sitBtn.Size = UDim2.new(0,240,0,36)
+
+sitBtn.BackgroundColor3 = Color3.fromRGB(170,0,0)
+
+sitBtn.Text = "Ngồi: Bật"
+
+sitBtn.Font = Enum.Font.GothamBold
+
+sitBtn.TextSize = 14
+
+sitBtn.TextColor3 = Color3.new(1,1,1)
+
+Instance.new("UICorner",sitBtn).CornerRadius = UDim.new(0,12)
+
+
+
+local layBtn = Instance.new("TextButton")
+
+layBtn.Parent = content
+
+layBtn.Position = UDim2.new(0,15,0,335)
+
+layBtn.Size = UDim2.new(0,240,0,36)
+
+layBtn.BackgroundColor3 = Color3.fromRGB(170,0,0)
+
+layBtn.Text = "Nằm: Bật"
+
+layBtn.Font = Enum.Font.GothamBold
+
+layBtn.TextSize = 14
+
+layBtn.TextColor3 = Color3.new(1,1,1)
+
+Instance.new("UICorner",layBtn).CornerRadius = UDim.new(0,12)
+
+
+
+local function resetCharacterState(char, root, hum)
+
+root.Anchored = false
+
+hum.PlatformStand = false
+
+for _, child in pairs(char:GetDescendants()) do
+
+if child:IsA("Motor6D") and child.Name ~= "RootJoint" then
+
+child.CurrentAngle = 0
+
+child.Transform = CFrame.new()
+
+end
+
+end
+
+end
+
+
+
+sitBtn.MouseButton1Click:Connect(function()
+
+local char = player.Character
+
+if not char then return end
+
+local root = char:FindFirstChild("HumanoidRootPart")
+
+local hum = char:FindFirstChildOfClass("Humanoid")
+
+if not root or not hum then return end
+
+
+
+-- Xử lý đổi trạng thái từ Nằm sang Ngồi mượt mà
+
+if layEnabled then
+
+layEnabled = false
+
+layBtn.Text = "Nằm: Bật"
+
+layBtn.BackgroundColor3 = Color3.fromRGB(170,0,0)
+
+local dropLay = 2.5
+
+if hum.RigType == Enum.HumanoidRigType.R15 then dropLay = hum.HipHeight + (root.Size.Y/2) - (root.Size.Z/2) end
+
+root.CFrame = root.CFrame + Vector3.new(0, dropLay, 0) -- Nâng lên đứng
+
+end
+
+
+
+sitEnabled = not sitEnabled
+
+
+
+if sitEnabled then
+
+sitBtn.Text = "Ngồi: Tắt"
+
+sitBtn.BackgroundColor3 = Color3.fromRGB(0,170,0)
+
+
+
+local dropOffset = 2
+
+if hum.RigType == Enum.HumanoidRigType.R15 then dropOffset = hum.HipHeight end
+
+targetPosition = root.Position - Vector3.new(0, dropOffset, 0)
+
+
+
+local flatLook = root.CFrame.LookVector * Vector3.new(1, 0, 1)
+
+if flatLook.Magnitude > 0 then targetLookVector = flatLook.Unit else targetLookVector = root.CFrame.LookVector end
+
+
+
+root.Anchored = true
+
+for _, track in pairs(hum:GetPlayingAnimationTracks()) do track:Stop() end
+
+hum.PlatformStand = true
+
+else
+
+sitBtn.Text = "Ngồi: Bật"
+
+sitBtn.BackgroundColor3 = Color3.fromRGB(170,0,0)
+
+local dropOffset = 2
+
+if hum.RigType == Enum.HumanoidRigType.R15 then dropOffset = hum.HipHeight end
+
+root.CFrame = root.CFrame + Vector3.new(0, dropOffset, 0)
+
+resetCharacterState(char, root, hum)
+
+end
+
+end)
+
+
+
+layBtn.MouseButton1Click:Connect(function()
+
+local char = player.Character
+
+if not char then return end
+
+local root = char:FindFirstChild("HumanoidRootPart")
+
+local hum = char:FindFirstChildOfClass("Humanoid")
+
+if not root or not hum then return end
+
+
+
+-- Xử lý đổi trạng thái từ Ngồi sang Nằm mượt mà
+
+if sitEnabled then
+
+sitEnabled = false
+
+sitBtn.Text = "Ngồi: Bật"
+
+sitBtn.BackgroundColor3 = Color3.fromRGB(170,0,0)
+
+local dropSit = 2
+
+if hum.RigType == Enum.HumanoidRigType.R15 then dropSit = hum.HipHeight end
+
+root.CFrame = root.CFrame + Vector3.new(0, dropSit, 0) -- Nâng lên đứng
+
+end
+
+
+
+layEnabled = not layEnabled
+
+
+
+if layEnabled then
+
+layBtn.Text = "Nằm: Tắt"
+
+layBtn.BackgroundColor3 = Color3.fromRGB(0,170,0)
+
+
+
+-- TÍNH TOÁN LẠI ĐỘ TRỄ ĐỂ LƯNG KHÍT SÀN (Hạ thêm 0.5 so với ngồi)
+
+local dropOffset = 2.5
+
+if hum.RigType == Enum.HumanoidRigType.R15 then
+
+dropOffset = hum.HipHeight + (root.Size.Y/2) - (root.Size.Z/2)
+
+end
+
+targetPosition = root.Position - Vector3.new(0, dropOffset, 0)
+
+
+
+local flatLook = root.CFrame.LookVector * Vector3.new(1, 0, 1)
+
+if flatLook.Magnitude > 0 then targetLookVector = flatLook.Unit else targetLookVector = root.CFrame.LookVector end
+
+
+
+root.Anchored = true
+
+for _, track in pairs(hum:GetPlayingAnimationTracks()) do track:Stop() end
+
+hum.PlatformStand = true
+
+else
+
+layBtn.Text = "Nằm: Bật"
+
+layBtn.BackgroundColor3 = Color3.fromRGB(170,0,0)
+
+local dropOffset = 2.5
+
+if hum.RigType == Enum.HumanoidRigType.R15 then
+
+dropOffset = hum.HipHeight + (root.Size.Y/2) - (root.Size.Z/2)
+
+end
+
+root.CFrame = root.CFrame + Vector3.new(0, dropOffset, 0)
+
+resetCharacterState(char, root, hum)
+
+end
+
+end)
+
+
+
+--========================
+
+-- APPLY
+
+--========================
+
+
+
+local function apply()
+
+
+
+local char = player.Character
+
+if not char then return end
+
+local hum = char:FindFirstChildOfClass("Humanoid")
+
+if not hum then return end
+
+local root = char:FindFirstChild("HumanoidRootPart")
+
+
+
+if (sitEnabled or layEnabled) and root then
+
+root.Anchored = true
+
+hum.PlatformStand = true
+
+
+
+local moveDirection = hum.MoveDirection
+
+local camera = workspace.CurrentCamera
+
+local isShiftLock = UIS.MouseBehavior == Enum.MouseBehavior.LockCenter
+
+
+
+if isShiftLock and camera then
+
+local camLook = camera.CFrame.LookVector * Vector3.new(1, 0, 1)
+
+if camLook.Magnitude > 0.01 then targetLookVector = camLook.Unit end
+
+elseif moveDirection.Magnitude > 0.01 then
+
+targetLookVector = moveDirection.Unit
+
+end
+
+
+
+if sitEnabled then
+
+root.CFrame = CFrame.lookAt(targetPosition, targetPosition + targetLookVector)
+
+local torso = char:FindFirstChild("Torso")
+
+if torso then
+
+if torso:FindFirstChild("Left Hip") then torso["Left Hip"].Transform = CFrame.Angles(0, 0, math.rad(-90)) end
+
+if torso:FindFirstChild("Right Hip") then torso["Right Hip"].Transform = CFrame.Angles(0, 0, math.rad(90)) end
+
+if torso:FindFirstChild("Left Shoulder") then torso["Left Shoulder"].Transform = CFrame.new() end
+
+if torso:FindFirstChild("Right Shoulder") then torso["Right Shoulder"].Transform = CFrame.new() end
+
+end
+
+if char:FindFirstChild("UpperTorso") then
+
+local leftThigh = char:FindFirstChild("LeftUpperLeg") and char.LeftUpperLeg:FindFirstChild("LeftHip")
+
+local rightThigh = char:FindFirstChild("RightUpperLeg") and char.RightUpperLeg:FindFirstChild("RightHip")
+
+if leftThigh then leftThigh.Transform = CFrame.Angles(math.rad(-90), 0, 0) end
+
+if rightThigh then rightThigh.Transform = CFrame.Angles(math.rad(-90), 0, 0) end
+
+end
+
+elseif layEnabled then
+
+-- Xoay 90 độ để LƯNG ốp sát xuống mặt đất, kết hợp bộ đệm độ sâu của Torso
+
+local baseCFrame = CFrame.lookAt(targetPosition, targetPosition + targetLookVector)
+
+root.CFrame = baseCFrame * CFrame.Angles(math.rad(90), 0, 0)
+
+
+
+local torso = char:FindFirstChild("Torso")
+
+if torso then
+
+if torso:FindFirstChild("Left Hip") then torso["Left Hip"].Transform = CFrame.new() end
+
+if torso:FindFirstChild("Right Hip") then torso["Right Hip"].Transform = CFrame.new() end
+
+if torso:FindFirstChild("Left Shoulder") then torso["Left Shoulder"].Transform = CFrame.new() end
+
+if torso:FindFirstChild("Right Shoulder") then torso["Right Shoulder"].Transform = CFrame.new() end
+
+end
+
+
+
+if char:FindFirstChild("UpperTorso") then
+
+for _, child in pairs(char:GetDescendants()) do
+
+if child:IsA("Motor6D") and child.Name ~= "RootJoint" then
+
+child.Transform = CFrame.new()
+
+end
+
+end
+
+end
+
+end
+
+else
+
+hum.WalkSpeed = getSpeed()
+
+end
+
+
+
+hum.UseJumpPower = false
+
+hum.JumpHeight = getJump()
+
+end
+
+
+
+player.CharacterAdded:Connect(function() task.wait(1); apply() end)
+
+
+
+RunService.Stepped:Connect(function()
+
+apply()
+
+if noclip and player.Character then
+
+for _,v in pairs(player.Character:GetDescendants()) do
+
+if v:IsA("BasePart") then v.CanCollide = false end
+
+end
+
+end
+
+end)
